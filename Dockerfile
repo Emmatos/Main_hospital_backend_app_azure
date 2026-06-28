@@ -1,6 +1,6 @@
 
 # Stage 1: Build the application
-FROM maven:3.6.0-jdk-8 AS build
+FROM FROM maven:3.9-eclipse-temurin-8 AS build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -16,7 +16,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run the application
-FROM openjdk:8-jdk-alpine
+FROM eclipse-temurin:8-jre
 
 # Set the working directory in the container
 WORKDIR /app
