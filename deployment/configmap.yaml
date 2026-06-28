@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: hospital-backend-config
 data:
-  DB_HOST: "hospital-server.mysql.database.azure.com"
+  DB_HOST: "telcodbsv.mysql.database.azure.com"
   DB_PORT: "3306"
-  DB_NAME: "dental_management_system"
+  DB_NAME: "dental_management_system"`
