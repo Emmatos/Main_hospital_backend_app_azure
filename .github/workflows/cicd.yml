@@ -66,6 +66,6 @@ jobs:
 
             kubectl apply -f deployment
              
-            sleep 20
+            sleep 15
 
             kubectl get pod 
