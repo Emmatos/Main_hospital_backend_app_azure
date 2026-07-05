@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hospital-backend-container
-        image: emmatos1/hospital_backend_app_azure  # Replace this with your Docker image name
+        image: emmatos1/hospital-app-backend:9  # Replace this with your Docker image name
         ports:
         - containerPort: 8080  # Replace with your app's port if necessary
         env:

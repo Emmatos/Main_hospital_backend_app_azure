@@ -13,6 +13,9 @@ jobs:
   Continues-Integration_build_and_push:
     runs-on: ubuntu-latest
 
+    env:
+      IMAGE_NAME: hospital-app-backend
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -23,16 +26,16 @@ jobs:
 
        
     - name: Build container image
-      run: docker build -t ${{ secrets.REGISTRY_NAME }}/hospital-app-backend:${{ github.run_number }} .
+      run: docker build -t ${{ secrets.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} .
     
     - name: Log in to Docker Registry with short-lived credentials
       run: docker login -u ${{ secrets.REGISTRY_NAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
     
     - name: Push image to Docker Registry
-      run: docker push ${{ secrets.REGISTRY_NAME }}/hospital-app-backend:${{ github.run_number }}
+      run: docker push ${{ secrets.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
 
     - name: Clean up Docker image locally
-      run: docker rmi ${{ secrets.REGISTRY_NAME }}/hospital-app-backend:${{ github.run_number }}
+      run: docker rmi ${{ secrets.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
 
     - name: Clean up GitHub repo on runner
       run: rm -rf ./*
@@ -50,7 +53,7 @@ jobs:
       - name: Update the kubernetes Deployment file. 
         run: |
           cat deployment/deploy.yaml
-          sed -i "s+emmatos1/hospital_backend_app_azure:.*+emmatos1/hospital_backend_app_azure:${{ github.run_number }}+g" deployment/deploy.yaml
+          sed -i "s+image: .*+image: emmatos1/hospital-app-backend:${{ github.run_number }}+g" deployment/deploy.yaml
           cat deployment/deploy.yaml
           
       - name: Authenticate to Azure Cloud via AZ-Cli
@@ -66,6 +69,6 @@ jobs:
 
             kubectl apply -f deployment
              
-            sleep 18 
+            sleep 22
 
             kubectl get pod 
