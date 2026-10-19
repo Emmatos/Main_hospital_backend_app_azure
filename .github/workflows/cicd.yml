@@ -28,18 +28,18 @@ jobs:
     - name: Build container image
       run: docker build -t ${{ secrets.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} .
     
-    - name: Log in to Docker Registry with short-lived credentials
-      run: docker login -u ${{ secrets.REGISTRY_NAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Log in to Docker Hub
+      env:
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        REGISTRY_NAME: ${{ secrets.REGISTRY_NAME }}
+      run: echo "$DOCKERHUB_TOKEN" | docker login -u "$REGISTRY_NAME" --password-stdin
+
     
     - name: Push image to Docker Registry
       run: docker push ${{ secrets.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
 
     - name: Clean up Docker image locally
       run: docker rmi ${{ secrets.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
-
-    - name: Clean up GitHub repo on runner
-      run: rm -rf ./*
-
 
 
   Continues-Deployment:
@@ -68,7 +68,7 @@ jobs:
             kubectl apply -f clusterissuer.yaml
 
             kubectl apply -f deployment
-             
-            sleep 22
-
-            kubectl get pod 
+            kubectl rollout status deployment/hospital-backend-deployment --timeout=180s
+            kubectl get pods
+            kubectl get services
+            
